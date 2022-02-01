@@ -30,7 +30,6 @@ class League {
         }
         if (choice == 1) {
             value_leaderboard();
-            return false;
         }
         if (choice == 2) {
             System.out.println("Pick a team: ");
@@ -41,10 +40,14 @@ class League {
             }
             System.out.print("\n");
             choice = input.nextByte();
-            this.teams.get(choice-1).roster();
-            return false;
+            try {
+                this.teams.get(choice - 1).roster();
+            }
+            catch (InputMismatchException e) {
+                System.out.println("Invalid number");
+            }
         }
-        return true;
+        return choice == 3;
     }
 }
 
@@ -96,7 +99,7 @@ class Team {
 
     void roster() {
         System.out.println(this.name + ":");
-        for (Player item: this.players) {
+        for (Player item : this.players) {
             System.out.println(item);
         }
     }
