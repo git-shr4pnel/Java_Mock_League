@@ -17,21 +17,46 @@ class League {
     }
 
     void simulate() {
-        ArrayList<Match> fixtures = generate_matches();
-        System.out.println(fixtures);
-    }
-
-    private ArrayList<Match> generate_matches() {
-        ArrayList<Match> fixtures = new ArrayList<>();
-        for (Team team: this.teams) {
-            for (int i = 0; i < this.teams.size(); i++) {
-                if (team == this.teams.get(i)) {
-                    continue;
-                }
-                fixtures.add(new Match(team, this.teams.get(i)));
+        Random random = new Random();
+        Scanner input = new Scanner(System.in);
+        ArrayList<String> keys = gen_matchweek();
+        HashMap<String, ArrayList<Match>> fixtures = new HashMap<>();
+        ArrayList<Match> matches = gen_fixtures();
+        System.out.println("[1] Random match\n[2] Choose match\n");
+        try {
+            byte choice = input.nextByte();
+            if (choice < 1 || choice > 2) {
+                throw new IOException();
             }
         }
-        return fixtures;
+        catch (IOException e) {
+            System.out.println("Invalid number");
+        }
+        if (choice == 1) {
+            Match rand_match = matches.get(random.nextInt((int) matches.size()-1));
+            System.out.println(rand_match);
+        }
+    }
+
+    private ArrayList<Match> gen_fixtures() {
+        ArrayList<Match> main_match_list = new ArrayList<>();
+        for (int i = 0; i < this.teams.size(); i++) {
+            for (Team team: this.teams) {
+                if (this.teams.get(i) == team) {
+                    continue;
+                }
+                main_match_list.add(new Match(this.teams.get(i), team));
+            }
+        }
+        return main_match_list;
+    }
+
+    private ArrayList<String> gen_matchweek() {
+        ArrayList<String> matchweeks = new ArrayList<>();
+        for (int i = 1; i < 43; i++) {
+            matchweeks.add("Matchweek " + String.valueOf(i));
+        }
+        return matchweeks;
     }
 
     public boolean choices() {
