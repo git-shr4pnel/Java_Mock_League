@@ -12,17 +12,35 @@ class League {
     }
     public void value_leaderboard() {
         for (Team team: teams) {
-            System.out.println(team);
+            System.out.println(team + ", worth £" + team.value + "M");
         }
+    }
+
+    void simulate() {
+        ArrayList<Match> fixtures = generate_matches();
+        System.out.println(fixtures);
+    }
+
+    private ArrayList<Match> generate_matches() {
+        ArrayList<Match> fixtures = new ArrayList<>();
+        for (Team team: this.teams) {
+            for (int i = 0; i < this.teams.size(); i++) {
+                if (team == this.teams.get(i)) {
+                    continue;
+                }
+                fixtures.add(new Match(team, this.teams.get(i)));
+            }
+        }
+        return fixtures;
     }
 
     public boolean choices() {
         Scanner input = new Scanner(System.in);
-        System.out.println("[1] Team Values\n[2] Check team rosters\n[3] Exit");
+        System.out.println("[1] Team Values\n[2] Check team rosters\n[3] Match Simulation\n[4] Exit");
         byte choice = 0;
         try {
             choice = input.nextByte();
-            if (choice < 1 || choice > 3) {
+            if (choice < 1 || choice > 4) {
                 throw new InputMismatchException();
             }
         } catch (InputMismatchException e) {
@@ -47,7 +65,10 @@ class League {
                 System.out.println("Invalid number");
             }
         }
-        return choice == 3;
+        if (choice == 3) {
+            simulate();
+        }
+        return choice == 4;
     }
 }
 
@@ -72,7 +93,7 @@ class Team {
     }
 
     public String toString() {
-        return this.name + ", worth " + this.value + "M";
+        return this.name;
     }
 
     private ArrayList<Player> generate_roster() {
@@ -113,8 +134,8 @@ class Team {
         try {
             f_name = new RandomAccessFile(first, "r");
             s_name = new RandomAccessFile(second, "r");
-            f_name.seek(random.nextLong(f_name.length()));
-            s_name.seek(random.nextLong(s_name.length()));
+            f_name.seek(random.nextInt((int) f_name.length()));
+            s_name.seek(random.nextInt((int) s_name.length()));
             f_name.readLine();
             s_name.readLine();
             name = f_name.readLine() + " " + s_name.readLine();
@@ -135,8 +156,21 @@ class Player {
         this.value = value_is;
         this.position = position_is;
     }
+
     public String toString() {
         return this.name + " is a " + this.position + " and is worth £" + this.value + "M";
+    }
+}
+
+class Match {
+    Team home, away;
+    public Match(Team home, Team away) {
+        this.home = home;
+        this.away = away;
+    }
+
+    public String toString() {
+        return this.home + " vs " + this.away;
     }
 }
 
@@ -147,6 +181,6 @@ class Main {
         boolean done = false;
         while (!done) {
             done = league.choices();
-        }
+        } 
     }
 }
